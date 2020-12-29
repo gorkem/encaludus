@@ -47,8 +47,8 @@ export class Bridge {
         env.BRIDGE_K8S_MODE_OFF_CLUSTER_ALERTMANAGER = alertEndPoint.body.data['alertmanagerPublicURL'];
       }
     } catch (error) {
-        // ignore not all clusters will have/expose these endpointsgit
-        console.log(error);
+      // ignore not all clusters will have/expose these endpointsgit
+      console.log(error);
     }
     return Promise.resolve(env);
 
@@ -59,8 +59,15 @@ export class Bridge {
 
 
     const promise = new Promise((resolve, reject) => {
+      let binPath = path.join(root, './bin');
+      const exeName = process.platform === 'win32' ? 'bridge.exe' : 'bridge';
+      if (process.env.NODE_ENV !== 'production') {
+        binPath = path.join(binPath, exeName);
+      } else {
+        binPath = path.join(binPath, './'+ process.platform, exeName);
+      }
 
-      const execPath = path.resolve(path.join(root, './bin','./bridge'));
+      const execPath = path.resolve(binPath);
       this.bridgeProcess = spawn(execPath, {
         env: currentEnv,
         cwd: root
