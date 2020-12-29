@@ -13,6 +13,7 @@ jobs:
     strategy:
       matrix:
         node-version: [15.x]
+    
     steps:
     - name: Get Console master
       uses: actions/checkout@v2
@@ -35,9 +36,11 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: yarn install
+    - name: Install console frontend dependencies
+      run: yarn install
       working-directory: ./frontend
-    - run: yarn run build
+    - name: Build console frontend
+      run: yarn run build
       working-directory: ./frontend
     - name: Upload frontend artifacts
       uses: actions/upload-artifact@v2
@@ -48,7 +51,8 @@ jobs:
       uses: actions/setup-go@v2.1.3
       with:
         go-version: 1.15.5
-    - run: go build -o bin/linux/bridge github.com/openshift/console/cmd/bridge
+    - name: Build console backend binary
+      run: go build -o bin/linux/bridge github.com/openshift/console/cmd/bridge
       env:
         GOFLAGS: '-mod=vendor'
         GOOS: 'linux'
@@ -57,7 +61,8 @@ jobs:
     - uses: actions/setup-go@v2.1.3
       with:
         go-version: 1.15.5
-    - run: go build -o bin/darwin/bridge github.com/openshift/console/cmd/bridge
+    - name: Build console backend binary
+      run: go build -o bin/darwin/bridge github.com/openshift/console/cmd/bridge
       env:
         GOFLAGS: '-mod=vendor'
         GOOS: 'darwin'
@@ -66,7 +71,8 @@ jobs:
     - uses: actions/setup-go@v2.1.3
       with:
         go-version: 1.15.5
-    - run: go build -o bin/win32/bridge.exe github.com/openshift/console/cmd/bridge
+    - name: Build console backend binary
+      run: go build -o bin/win32/bridge.exe github.com/openshift/console/cmd/bridge
       env:
         GOFLAGS: '-mod=vendor'
         GOOS: 'windows'
@@ -99,11 +105,14 @@ jobs:
         path: ../console/bin
     - name: Build
       uses: actions/setup-node@v1
-    - run: yarn install
+    - name: Install dependencies
+      run: yarn install
       working-directory: ./encaludus
-    - run: yarn run compile
+    - name: Compile .ts
+      run: yarn run compile
       working-directory: ./encaludus
-    - run: yarn run make
+    - name: Make elektron package
+      run: yarn run make
       working-directory: ./encaludus
     - name: Upload Linux zip
       if: runner.os == 'Linux'
