@@ -7,7 +7,7 @@ on:
     - cron: '0 2 * * *'
 
 jobs:
-  
+
   build-frontend:
     name: Build console frontend
     runs-on: [ubuntu-latest]
@@ -69,13 +69,13 @@ jobs:
       with:
         name: frontend-dist
         path: ./frontend/public/dist
-    - name: Build 
+    - name: Build
       uses: actions/setup-node@v1
     - run: yarn install
       working-directory: ./encaludus
     - run: yarn run compile
       working-directory: ./encaludus
-    - run: yarn run make     
+    - run: yarn run make
       working-directory: ./encaludus
     - name: Upload Linux zip
       if: runner.os == 'Linux'
@@ -84,11 +84,11 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: https://uploads.github.com/repos/gorkem/encaludus/releases/35778241/assets{?name,label}
-        release_id: 35117499
+        release_id: 35778241
         asset_path: ./encaludus/out/make/zip/linux/x64/encaludus-linux-x64-0.1.0.zip
         asset_name: encaludus-${{ runner.os }}-$$.zip
-        asset_content_type: application/zip 
-        max_releases: 7 
+        asset_content_type: application/zip
+        max_releases: 7
     - name: Upload Windows zip
       if: runner.os == 'Windows'
       uses: WebFreak001/deploy-nightly@v1.1.0
@@ -96,10 +96,10 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: https://uploads.github.com/repos/gorkem/encaludus/releases/35778241/assets{?name,label}
-        release_id: 35117499
+        release_id: 35778241
         asset_path: ./encaludus/out/make/zip/win32/x64/encaludus-win32-x64-0.1.0.zip
         asset_name: encaludus-${{ runner.os }}-$$.zip
-        asset_content_type: application/zip 
+        asset_content_type: application/zip
         max_releases: 7
     - name: Upload Mac zip
       if: runner.os == 'macOS'
@@ -108,8 +108,8 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         upload_url: https://uploads.github.com/repos/gorkem/encaludus/releases/35778241/assets{?name,label}
-        release_id: 35117499
+        release_id: 35778241
         asset_path: ./encaludus/out/make/zip/darwin/x64/encaludus-darwin-x64-0.1.0.zip
         asset_name: encaludus-${{ runner.os }}-$$.zip
-        asset_content_type: application/zip 
+        asset_content_type: application/zip
         max_releases: 7
