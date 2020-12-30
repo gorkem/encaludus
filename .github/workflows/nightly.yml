@@ -114,13 +114,10 @@ jobs:
         node-version: '15'
     - name: Install dependencies
       run: yarn install
-      working-directory: ./encaludus
     - name: Compile .ts
       run: yarn run compile
-      working-directory: ./encaludus
     - name: Make elektron package
       run: yarn run make
-      working-directory: ./encaludus
     - name: Upload Linux zip
       if: runner.os == 'Linux'
       uses: WebFreak001/deploy-nightly@v1.1.0
