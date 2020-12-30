@@ -94,7 +94,6 @@ jobs:
     strategy:
       matrix:
         os: [macos-latest, windows-latest, ubuntu-latest]
-        node-version: [12.x]
     steps:
     - uses: actions/checkout@v2
     - name: Restore frontend-dist
@@ -114,6 +113,8 @@ jobs:
         path: ../console/pkg/graphql
     - name: Build
       uses: actions/setup-node@v1
+      with:
+        node-version: '12'
     - name: Install dependencies
       run: yarn install
       working-directory: ./encaludus
