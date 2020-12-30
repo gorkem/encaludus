@@ -111,7 +111,7 @@ jobs:
     - name: Build
       uses: actions/setup-node@v2
       with:
-        node-version: '12'
+        node-version: '15'
     - name: Install dependencies
       run: yarn install
       working-directory: ./encaludus
