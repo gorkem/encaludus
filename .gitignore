@@ -4,3 +4,4 @@ app
 frontend
 bin
 pkg
+.kube
