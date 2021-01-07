@@ -1,10 +1,9 @@
-
-
 import * as path from 'path';
 import { spawn, ChildProcess } from 'child_process';
 import * as k8s from '@kubernetes/client-node';
 // @ts-ignore
 import { rootPath as root } from 'electron-root-path';
+import {app} from 'electron';
 
 const baseEnv: NodeJS.ProcessEnv = {
   BRIDGE_USER_AUTH: 'disabled',
@@ -61,7 +60,7 @@ export class Bridge {
     const promise = new Promise((resolve, reject) => {
       let binPath = path.join(root, './bin');
       const exeName = process.platform === 'win32' ? 'bridge.exe' : 'bridge';
-      if (process.env.NODE_ENV !== 'production') {
+      if (!app.isPackaged) {
         binPath = path.join(binPath, exeName);
       } else {
         binPath = path.join(binPath, './'+ process.platform, exeName);
