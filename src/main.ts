@@ -5,14 +5,14 @@ import {Bridge} from './bridge';
 import {Cluster, ClusterConnectionStatus} from './cluster';
 import { WindowManager } from './window-manager';
 
-const conttextTracker = new ActiveContextTracker(60000);
+
 const windowManager  = new WindowManager();
+
+app.setName("Encaludus");
 
 const bridge = new Bridge();
 
-conttextTracker.activeChanged.on('context-changed', ()=> {
-  setUpBridgeAndLoad();
-});
+
 
 async function setUpBridgeAndLoad() {
   await bridge.stop();
@@ -27,11 +27,14 @@ async function setUpBridgeAndLoad() {
   }
 }
 
-app.setName("Encaludus");
+
 
 app.on('ready', async() => {
+  const conttextTracker = new ActiveContextTracker(60000);
+  conttextTracker.activeChanged.on('context-changed', ()=> {
+    setUpBridgeAndLoad();
+  });
   windowManager.initMainWindow();
-  setUpBridgeAndLoad();
 });
 
 app.on('window-all-closed', () => {
