@@ -21,10 +21,13 @@ export class Bridge {
     kc.loadFromDefault();
     const currentContext = kc.getContextObject(kc.currentContext);
     if (!currentContext?.cluster) {
-      return Promise.reject("Can not determine current kubernetes cluster from context");
+      return Promise.reject('Can not determine current kubernetes cluster from context');
     }
     const endpoint = kc.getCluster(currentContext?.cluster)?.server;
     const token = kc.getCurrentUser()?.token;
+    if(!token){
+      return Promise.reject('No bearer-token can be determined for the current context');
+    }
     const env = {
       ...baseEnv,
       BRIDGE_K8S_MODE_OFF_CLUSTER_ENDPOINT: endpoint,
