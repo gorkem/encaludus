@@ -1,5 +1,6 @@
 
 import * as k8s from '@kubernetes/client-node';
+import {Bridge} from './bridge';
 
 export enum ClusterConnectionStatus {
   AccessGranted = 2,
@@ -10,10 +11,28 @@ export enum ClusterConnectionStatus {
 
 export class Cluster {
 
+  private bridge : Bridge | null =null;
+
   constructor() {
     const kc = this.getKubeConfig();
   }
 
+
+  public async connectBridge(): Promise<ClusterConnectionStatus> {
+    const connectionStatus = await this.getConnectionStatus();
+    if(connectionStatus == ClusterConnectionStatus.AccessGranted){
+      this.bridge = new Bridge();
+      await this.bridge.start();
+    }
+
+    return connectionStatus;
+  }
+
+  public async dispose(){
+    if(this.bridge){
+      return this.bridge.stop();
+    }
+  }
 
   public async getConnectionStatus(): Promise<ClusterConnectionStatus> {
     const kc = this.getKubeConfig();

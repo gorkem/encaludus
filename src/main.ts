@@ -1,47 +1,35 @@
 import { app } from 'electron';
-import { ActiveContextTracker } from './active-context-tracker';
-
-import {Bridge} from './bridge';
-import {Cluster, ClusterConnectionStatus} from './cluster';
+import { ClusterConnectionStatus } from './cluster';
+import { ClusterManager } from './cluster-manager';
 import { WindowManager } from './window-manager';
 
 
-const windowManager  = new WindowManager();
+const windowManager = new WindowManager();
+let clusterManager:ClusterManager;
 
 app.setName("Encaludus");
 
-const bridge = new Bridge();
 
-
-
-async function setUpBridgeAndLoad() {
-  await bridge.stop();
-  const cluster = new Cluster();
-  const clusterStatus = await cluster.getConnectionStatus();
-
-  if(clusterStatus === ClusterConnectionStatus.AccessGranted){
-    bridge.start().then( ()=>  windowManager.setMainURL('http://localhost:9000')).catch ((error) => console.log(error));
-  }
-  else{
-    windowManager.setMainURL('./www/no-connection.html');
-  }
-}
-
-
-
-app.on('ready', async() => {
-  const conttextTracker = new ActiveContextTracker(60000);
-  conttextTracker.activeChanged.on('context-changed', ()=> {
-    setUpBridgeAndLoad();
+app.on('ready', async () => {
+  clusterManager = ClusterManager.getInstance();
+  clusterManager.on('connection-changed', (status: ClusterConnectionStatus) => {
+    if (status === ClusterConnectionStatus.AccessGranted) {
+      windowManager.setMainURL('http://localhost:9000');
+    }
+    else {
+      windowManager.setMainURL('./www/no-connection.html');
+    }
   });
   windowManager.initMainWindow();
 });
 
 app.on('window-all-closed', () => {
-  bridge.stop();
+  if(clusterManager){
+    clusterManager.dispose();
+  }
   app.quit();
 })
 
-app.on('activate', async() => {
+app.on('activate', async () => {
 
 })
