@@ -1,6 +1,6 @@
 
 import * as k8s from '@kubernetes/client-node';
-import {Bridge} from './bridge';
+import { Bridge } from './bridge';
 
 export enum ClusterConnectionStatus {
   AccessGranted = 2,
@@ -11,7 +11,7 @@ export enum ClusterConnectionStatus {
 
 export class Cluster {
 
-  private bridge : Bridge | null =null;
+  private bridge: Bridge | null = null;
 
   constructor() {
     const kc = this.getKubeConfig();
@@ -20,7 +20,7 @@ export class Cluster {
 
   public async connectBridge(): Promise<ClusterConnectionStatus> {
     const connectionStatus = await this.getConnectionStatus();
-    if(connectionStatus == ClusterConnectionStatus.AccessGranted){
+    if (connectionStatus == ClusterConnectionStatus.AccessGranted) {
       this.bridge = new Bridge();
       await this.bridge.start();
     }
@@ -28,8 +28,8 @@ export class Cluster {
     return connectionStatus;
   }
 
-  public async dispose(){
-    if(this.bridge){
+  public async dispose() {
+    if (this.bridge) {
       return this.bridge.stop();
     }
   }
@@ -42,15 +42,19 @@ export class Cluster {
       const version = await versionAPI.getCode();
     }
     catch (error) {
+
       if (error.statusCode) {
         if (error.statusCode >= 400 && error.statusCode < 500) {
-          status= ClusterConnectionStatus.AccessDenied;
+          status = ClusterConnectionStatus.AccessDenied;
         } else {
-          status= ClusterConnectionStatus.Offline;
+          status = ClusterConnectionStatus.Offline;
         }
       }
-      else{
-        Promise.reject(error);
+      else if (error.code && error.code === 'ETIMEDOUT' || error.code === 'ENETUNREACH') {
+        status = ClusterConnectionStatus.Offline;
+      } else {
+        console.log('Unexpected error connecting to active cluster:' + error);
+        return Promise.reject(error);
       }
     }
     return status;
