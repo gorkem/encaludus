@@ -1,4 +1,4 @@
-import { BrowserWindow } from "electron";
+import { BrowserWindow, shell } from "electron";
 import windowStateKeeper = require("electron-window-state");
 
 export class WindowManager {
@@ -24,6 +24,10 @@ export class WindowManager {
     });
     this.windowState.manage(this.mainWindow);
 
+    this.mainWindow.webContents.on("new-window", (event, url) => {
+      event.preventDefault();
+      shell.openExternal(url);
+    });
   }
 
   public setMainURL(url:string){
